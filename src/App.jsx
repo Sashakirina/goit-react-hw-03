@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import { nanoid } from "nanoid";
+
+import ContactForm from "./components/ContactForm/ContactForm";
+import SearchBox from "./components/SearchForm/SearchForm";
+import ContactList from "./components/ContactList/ContactList";
+import initialContacts from "./components/ContactList/contacts.json";
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [queryValue, setQueryValue] = useState("");
+	const [contacts, setContacts] = useState(() => {
+		return JSON.parse(localStorage.getItem("contacts")) || initialContacts;
+	});
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	const addContact = ({ name, number }) => {
+		const newContact = {
+			name,
+			number,
+			id: nanoid(),
+		};
+
+		setContacts((prevContacts) => {
+			return [...prevContacts, newContact];
+		});
+	};
+
+	const visibleContacts = contacts.filter((contact) =>
+		contact.name.toLowerCase().includes(queryValue.toLowerCase())
+	);
+
+	const deleteContact = (contactId) => {
+		setContacts((prevContacts) => {
+			return prevContacts.filter((contact) => contact.id !== contactId);
+		});
+	};
+
+	useEffect(() => {
+		localStorage.setItem("contacts", JSON.stringify(contacts));
+	}, [contacts]);
+
+	return (
+		<div>
+			<h1>Phonebook</h1>
+			<ContactForm onAdd={addContact} />
+			<SearchBox queryValue={queryValue} onSearch={setQueryValue} />
+			<ContactList contacts={visibleContacts} onDelete={deleteContact} />
+		</div>
+	);
 }
 
-export default App
+export default App;
