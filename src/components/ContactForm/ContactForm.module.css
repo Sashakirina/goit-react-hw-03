@@ -13,3 +13,7 @@
 .input {
 	width: 270px;
 }
+.inputError {
+	color: rgb(240, 71, 71);
+	font-weight: 400;
+}
