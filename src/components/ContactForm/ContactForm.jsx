@@ -2,19 +2,23 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useId } from "react";
 import style from "./ContactForm.module.css";
 import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { addContact } from "../../redux/contactsSlice";
+import { nanoid } from "@reduxjs/toolkit";
 
 const validationSchema = Yup.object().shape({
 	name: Yup.string("")
 		.min(3, "Need to be min 3 symbols!")
 		.max(50, "Need to be max 50 symbols!")
 		.required("This field is required!"),
-	number: Yup.number("Need to be a nubmer!")
+	number: Yup.string("")
 		.min(3, "Need to be min 3 symbols!")
 		.max(50, "Need to be max 50 symbols!")
 		.required("This field is required!"),
 });
 
-function ContactForm({ onAdd }) {
+function ContactForm() {
+	const dispatch = useDispatch();
 	const nameId = useId();
 	const phoneId = useId();
 
@@ -24,8 +28,10 @@ function ContactForm({ onAdd }) {
 		number: "",
 	};
 
-	const handleSubmit = (values, action) => {
-		onAdd({ name: values.name, number: values.number });
+	const handleSubmit = (value, action) => {
+		dispatch(
+			addContact({ id: nanoid(), name: value.name, number: value.number })
+		);
 		action.resetForm();
 	};
 

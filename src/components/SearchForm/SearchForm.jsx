@@ -1,7 +1,12 @@
 import { useId } from "react";
 import style from "./SearchForm.module.css";
+import { useDispatch, useSelector } from "react-redux";
+import { selectFilter, setFilter } from "../../redux/filtersSlice";
 
-function SearchForm({ queryValue, onSearch }) {
+function SearchForm() {
+	const dispatch = useDispatch();
+	const filter = useSelector(selectFilter);
+
 	const queryId = useId();
 
 	return (
@@ -12,8 +17,8 @@ function SearchForm({ queryValue, onSearch }) {
 				type="text"
 				name="query"
 				id={queryId}
-				value={queryValue}
-				onChange={(evt) => onSearch(evt.target.value)}
+				value={filter}
+				onChange={(evt) => dispatch(setFilter(evt.target.value))}
 			/>
 		</div>
 	);
